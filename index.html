@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>高频QRS技术虚拟仿真教学系统</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ===== 侧面板遮罩 ===== -->
+<div class="panel-overlay" id="panelOverlay"></div>
+<div class="detail-panel" id="detailPanel">
+  <div class="panel-header">
+    <div>
+      <div style="font-size:11px;color:var(--text-muted);letter-spacing:2px;margin-bottom:4px">知识详解</div>
+      <div style="font-size:17px;font-weight:700;color:#fff" id="panelTitle"></div>
+    </div>
+    <button class="panel-close" onclick="closePanel()">✕</button>
+  </div>
+  <div id="panelContent"></div>
+</div>
+
+<!-- ===== 顶部导航 ===== -->
+<nav class="top-nav">
+  <div class="nav-header">
+    <div class="nav-logo">
+      <div class="logo-icon">❤</div>
+      <div>
+        <div class="logo-text">HF-QRS</div>
+        <div class="logo-sub">虚拟仿真教学</div>
+      </div>
+    </div>
+    <div class="nav-title">
+      <h1>高频QRS技术虚拟仿真教学</h1>
+      <p>操作应用教程 · 2024版高频QRS专家共识</p>
+    </div>
+    <div class="nav-user">
+      <div class="progress-mini">
+        <span>总进度 32%</span>
+        <div class="progress-bar-mini">
+          <div class="progress-fill" data-width="32" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="avatar">医</div>
+    </div>
+  </div>
+  <div class="nav-tabs">
+    <div class="nav-tab active" data-module="mod-basic" onclick="switchModule('mod-basic')">
+      <span class="tab-num">1</span> 基础实操篇 <span class="tab-badge">核心</span>
+    </div>
+    <div class="nav-tab" data-module="mod-micro" onclick="switchModule('mod-micro')">
+      <span class="tab-num">2</span> 进阶篇-微观
+    </div>
+    <div class="nav-tab" data-module="mod-reading" onclick="switchModule('mod-reading')">
+      <span class="tab-num">3</span> 判读篇
+    </div>
+    <div class="nav-tab" data-module="mod-macro" onclick="switchModule('mod-macro')">
+      <span class="tab-num">4</span> 应用篇-宏观
+    </div>
+    <div class="nav-tab" data-module="mod-exam" onclick="switchModule('mod-exam')">
+      <span class="tab-num">5</span> 考核篇
+    </div>
+    <div class="nav-tab" style="margin-left:auto;background:rgba(29,158,117,0.15);color:#5dcaa5;border-bottom-color:transparent;cursor:pointer" onclick="location.href='simulation.html'">
+      <span style="margin-right:4px">▶</span> 进入虚拟仿真训练
+    </div>
+  </div>
+</nav>
+
+<!-- ===== 主内容区 ===== -->
+<div class="main-container">
+  <!-- 面包屑 -->
+  <div class="breadcrumb">
+    <span>首页</span>
+    <span class="sep">›</span>
+    <span>课程模块</span>
+    <span class="sep">›</span>
+    <span class="current" id="breadcrumb-current">基础实操篇</span>
+  </div>
+
+  <!-- ===== 模块1：基础实操篇 ===== -->
+  <div id="mod-basic" class="module-view active">
+    <div class="module-hero blue">
+      <div class="hero-icon blue">🔬</div>
+      <div class="hero-info">
+        <h2>基础实操篇（全流程检测操作）</h2>
+        <p>涵盖高频QRS检测的完整操作流程，从检测前准备到操作规范有效性提升，建立标准化操作意识。</p>
+        <div class="hero-tags">
+          <span class="hero-tag">检测前准备</span>
+          <span class="hero-tag">Rest采集</span>
+          <span class="hero-tag">Stress采集</span>
+          <span class="hero-tag">操作规范</span>
+        </div>
+      </div>
+      <div class="hero-progress">
+        <div class="progress-circle">
+          <svg viewBox="0 0 70 70">
+            <circle class="track" cx="35" cy="35" r="30"/>
+            <circle class="fill" cx="35" cy="35" r="30" data-pct="45"/>
+          </svg>
+          <div class="pct">45%</div>
+        </div>
+        <div style="font-size:12px;color:var(--text-muted)">完成进度</div>
+      </div>
+    </div>
+
+    <!-- ECG实时波形 -->
+    <div class="ecg-container">
+      <div class="ecg-label"><span class="live-dot"></span>实时高频QRS信号模拟 · 12导联</div>
+      <canvas id="ecg-canvas-1" class="ecg-canvas"></canvas>
+    </div>
+
+    <!-- 全流程步骤 -->
+    <div class="flow-section">
+      <div class="section-title">全流程检测操作路径</div>
+      <div class="flow-steps">
+        <div class="flow-step completed" onclick="handleStepClick(this); openContentPanel('prepare')">
+          <span class="step-status">✅</span>
+          <div class="step-title">检测前准备</div>
+          <div class="step-desc">1.5分钟静息检测<br>禁忌症排查<br>贴电极片</div>
+          <div class="step-key">关键：电极定位精准</div>
+        </div>
+        <div class="flow-step active" onclick="handleStepClick(this); openContentPanel('rest_collect')">
+          <span class="step-status">▶</span>
+          <div class="step-title">高频QRS Rest采集</div>
+          <div class="step-desc">静息状态1.5分钟<br>高频信号干扰噪声识别<br>运动风险防控指征</div>
+          <div class="step-key">关键：信号质量控制</div>
+        </div>
+        <div class="flow-step" onclick="handleStepClick(this); openContentPanel('stress_collect')">
+          <span class="step-status">○</span>
+          <div class="step-title">高频QRS Stress采集</div>
+          <div class="step-desc">13分钟改良Bruce方案<br>3-9分钟运动-3分钟恢复<br>运动负荷风险防范</div>
+          <div class="step-key">关键：钟恢复指标</div>
+        </div>
+        <div class="flow-step" onclick="handleStepClick(this); openContentPanel('improvement')">
+          <span class="step-status">○</span>
+          <div class="step-title">操作规范有效性提升</div>
+          <div class="step-desc">心肌缺血动态生理变化<br>药物高敏感性影响<br>影响因素及解决方案</div>
+          <div class="step-key">关键：干扰因素排查</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 关键训练点卡片 -->
+    <div class="section-title">关键训练点</div>
+    <div class="cards-grid">
+      <div class="content-card" onclick="openContentPanel('prepare')">
+        <div class="card-header">
+          <div class="card-icon">📋</div>
+          <div>
+            <div class="card-title">检测前准备</div>
+            <div class="card-sub">3个核心操作要点</div>
+          </div>
+          <span class="card-badge badge-key">必掌握</span>
+        </div>
+        <div class="card-body">
+          <div class="card-points">
+            <div class="point-item"><div class="point-dot"></div>1.5分钟静息检测（仰卧位）</div>
+            <div class="point-item"><div class="point-dot"></div>相对/绝对禁忌症排查（高血压/心绞痛）</div>
+            <div class="point-item"><div class="point-dot"></div>12导联电极片精准粘贴与固定</div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span style="font-size:12px;color:var(--text-muted)">预计学习：8分钟</span>
+          <button class="card-action">开始学习 →</button>
+        </div>
+      </div>
+
+      <div class="content-card" onclick="openContentPanel('rest_collect')">
+        <div class="card-header">
+          <div class="card-icon">📡</div>
+          <div>
+            <div class="card-title">高频QRS Rest 采集</div>
+            <div class="card-sub">静息信号采集与质量控制</div>
+          </div>
+          <span class="card-badge badge-core">重点</span>
+        </div>
+        <div class="card-body">
+          <div class="card-points">
+            <div class="point-item"><div class="point-dot"></div>高频信号干扰噪声识别（50Hz/肌电/漂移）</div>
+            <div class="point-item"><div class="point-dot"></div>运动风险防控高危指征识别</div>
+            <div class="point-item"><div class="point-dot"></div>QRS碎裂波（f-QRS）早期识别</div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span style="font-size:12px;color:var(--text-muted)">预计学习：12分钟</span>
+          <button class="card-action">开始学习 →</button>
+        </div>
+      </div>
+
+      <div class="content-card" onclick="openContentPanel('stress_collect')">
+        <div class="card-header">
+          <div class="card-icon">🏃</div>
+          <div>
+            <div class="card-title">高频QRS Stress 采集</div>
+            <div class="card-sub">运动负荷检测完整流程</div>
+          </div>
+          <span class="card-badge badge-core">重点</span>
+        </div>
+        <div class="card-body">
+          <div class="card-points">
+            <div class="point-item"><div class="point-dot"></div>改良Bruce方案：3-9分钟运动·3分钟恢复</div>
+            <div class="point-item"><div class="point-dot"></div>钟恢复指标（HRR）监测要点</div>
+            <div class="point-item"><div class="point-dot"></div>运动负荷风险防范终止标准</div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span style="font-size:12px;color:var(--text-muted)">预计学习：15分钟</span>
+          <button class="card-action">开始学习 →</button>
+        </div>
+      </div>
+
+      <div class="content-card" onclick="openContentPanel('improvement')">
+        <div class="card-header">
+          <div class="card-icon">⚡</div>
+          <div>
+            <div class="card-title">操作规范有效性提升</div>
+            <div class="card-sub">影响因素分析与质控方案</div>
+          </div>
+          <span class="card-badge badge-new">进阶</span>
+        </div>
+        <div class="card-body">
+          <div class="card-points">
+            <div class="point-item"><div class="point-dot"></div>心肌缺血动态生理变化规律</div>
+            <div class="point-item"><div class="point-dot"></div>高频QRS对药物的高敏感性</div>
+            <div class="point-item"><div class="point-dot"></div>检测结果影响因素及解决方案</div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span style="font-size:12px;color:var(--text-muted)">预计学习：10分钟</span>
+          <button class="card-action">开始学习 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 知识标签云 -->
+    <div class="section-title">相关知识点</div>
+    <div class="tag-cloud">
+      <span class="knowledge-tag type1">高频QRS</span>
+      <span class="knowledge-tag type2">12导联心电图</span>
+      <span class="knowledge-tag type1">f-QRS碎裂波</span>
+      <span class="knowledge-tag type3">心肌缺血</span>
+      <span class="knowledge-tag type4">Bruce方案</span>
+      <span class="knowledge-tag type2">钟恢复指标HRR</span>
+      <span class="knowledge-tag type1">信号噪声识别</span>
+      <span class="knowledge-tag type3">运动终止标准</span>
+      <span class="knowledge-tag type4">电极正确放置</span>
+      <span class="knowledge-tag type2">Wilson改良导联</span>
+    </div>
+  </div>
+
+  <!-- ===== 模块2：进阶篇-微观 ===== -->
+  <div id="mod-micro" class="module-view">
+    <div class="module-hero red">
+      <div class="hero-icon red">🔬</div>
+      <div class="hero-info">
+        <h2>进阶篇-微观（器官定位精细认知）</h2>
+        <p>通过交互式3D模型深入理解心肌病变机制，掌握三个三角完整讲解，结合2024版高频QRS专家共识与各指标标定义。</p>
+        <div class="hero-tags">
+          <span class="hero-tag">交互式3D模型</span>
+          <span class="hero-tag">三个三角</span>
+          <span class="hero-tag">技术基础原理</span>
+          <span class="hero-tag">2024版专家共识</span>
+        </div>
+      </div>
+      <div class="hero-progress">
+        <div class="progress-circle">
+          <svg viewBox="0 0 70 70">
+            <circle class="track" cx="35" cy="35" r="30"/>
+            <circle class="fill" cx="35" cy="35" r="30" data-pct="20"/>
+          </svg>
+          <div class="pct">20%</div>
+        </div>
+        <div style="font-size:12px;color:var(--text-muted)">完成进度</div>
+      </div>
+    </div>
+
+    <!-- 病床机制分析模型 -->
+    <div class="consensus-block">
+      <div class="consensus-icon">⚠️</div>
+      <div>
+        <div class="consensus-title">a. 内三角：心血管疾病床层机制分析模型</div>
+        <div class="consensus-body">心肌缺血→粒粒功能障碍→ATP减少→通道道失活→高频幅域减弱→QRS波碎裂（链式反应动画）。此为高频QRS信号改变的核心分子机制，理解这一链式反应是掌握全部诊断逻辑的基础。</div>
+      </div>
+    </div>
+
+    <!-- 三个三角 -->
+    <div class="section-title">交互式3D模型—三个三角完整讲解</div>
+    <div class="triangle-section">
+      <div class="triangle-card inner" onclick="openContentPanel('triangle_tech')">
+        <div class="tri-label inner">a · 内三角</div>
+        <div class="tri-title">心肌缺血分子机制</div>
+        <div class="tri-items">
+          <div class="tri-item">心肌缺血→线粒体粒粒功能障碍</div>
+          <div class="tri-item">QRS高频信号→通道道活失活</div>
+          <div class="tri-item">高频幅域减弱→QRS波碎裂</div>
+          <div class="tri-item">（链式反应动画演示）</div>
+        </div>
+        <div style="margin-top:14px">
+          <button class="card-action" style="width:100%">查看详解 →</button>
+        </div>
+      </div>
+
+      <div class="triangle-card iron" onclick="openPanel({title:'b铁三角：心脏整体功能分析模型', html:`
+        <div class='key-point-list'>
+          <div class='key-point'><div class='key-point-title'>心室功能整合评估</div><div class='key-point-body'>铁三角涵盖：心肌收缩功能（EF）、舒张功能（E/A比值）、心肌纤维化程度（GLS），三维立体评估心脏整体功能状态。</div></div>
+          <div class='key-point'><div class='key-point-title'>高频QRS与铁三角关联</div><div class='key-point-body'>HF-QRS幅度下降与EF降低高度相关（r=0.78），可早期预测心功能恶化，先于常规心电图3-6个月出现异常。</div></div>
+        </div>`})">
+        <div class="tri-label iron">b · 铁三角</div>
+        <div class="tri-title">心脏整体功能分析模型</div>
+        <div class="tri-items">
+          <div class="tri-item">心室收缩/舒张功能整合</div>
+          <div class="tri-item">心肌纤维化程度评估</div>
+          <div class="tri-item">HF-QRS与EF相关性分析</div>
+          <div class="tri-item">早期心功能恶化预测</div>
+        </div>
+        <div style="margin-top:14px">
+          <button class="card-action" style="width:100%">查看详解 →</button>
+        </div>
+      </div>
+
+      <div class="triangle-card outer" onclick="openPanel({title:'c外三角：七心肌梗死合并分型', html:`
+        <div class='key-point-list'>
+          <div class='key-point'><div class='key-point-title'>七型心肌梗死分型</div><div class='key-point-body'>1型（斑块破裂/固体块破裂）、2型（微微环境障碍/结构性心肌病）、3型（恶性心律失常）及其合并分型在高频QRS中的特异性表现。</div></div>
+          <div class='key-point'><div class='key-point-title'>合并分型诊断要点</div><div class='key-point-body'>例如：心脏→心衰的发展路径；粒粒体（线粒体）→粒粒血（供血）→指导者（药物/装置）的完整管理链。</div></div>
+        </div>`})">
+        <div class="tri-label outer">c · 外三角</div>
+        <div class="tri-title">七心肌梗死合并分型</div>
+        <div class="tri-items">
+          <div class="tri-item">1型：斑块破裂/固体块破裂</div>
+          <div class="tri-item">2型：微循环障碍/结构性心肌病</div>
+          <div class="tri-item">3型：恶性心律失常</div>
+          <div class="tri-item">合并分型高频QRS特征</div>
+        </div>
+        <div style="margin-top:14px">
+          <button class="card-action" style="width:100%">查看详解 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 技术基础原理 + 专家共识 -->
+    <div class="cards-grid">
+      <div class="content-card" onclick="openContentPanel('triangle_tech')">
+        <div class="card-header">
+          <div class="card-icon">⚗️</div>
+          <div>
+            <div class="card-title">技术基础原理</div>
+            <div class="card-sub">高频QRS信号发生机制</div>
+          </div>
+          <span class="card-badge badge-core">核心</span>
+        </div>
+        <div class="card-body">
+          <div class="card-points">
+            <div class="point-item"><div class="point-dot"></div>高频成分（150-250Hz）的生理来源</div>
+            <div class="point-item"><div class="point-dot"></div>缺血导致高频成分衰减的分子机制</div>
+            <div class="point-item"><div class="point-dot"></div>QRS碎裂波（f-QRS）的病理意义</div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span style="font-size:12px;color:var(--text-muted)">预计学习：20分钟</span>
+          <button class="card-action">开始学习 →</button>
+        </div>
+      </div>
+
+      <div class="content-card">
+        <div class="card-header">
+          <div class="card-icon">📜</div>
+          <div>
+            <div class="card-title">2024版高频QRS专家共识</div>
+            <div class="card-sub">最新临床指南与标准</div>
+          </div>
+          <span class="card-badge badge-new">2024新版</span>
+        </div>
+        <div class="card-body">
+          <div class="card-points">
+            <div class="point-item"><div class="point-dot"></div>高频QRS各项指标标定义（振幅/频率/碎裂度）</div>
+            <div class="point-item"><div class="point-dot"></div>Rest/Stress检测正常参考值范围</div>
+            <div class="point-item"><div class="point-dot"></div>专家推荐的临床应用场景与适应证</div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span style="font-size:12px;color:var(--text-muted)">预计学习：25分钟</span>
+          <button class="card-action">查阅共识 →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 模块3：判读篇 ===== -->
+  <div id="mod-reading" class="module-view">
+    <div class="module-hero green">
+      <div class="hero-icon green">📊</div>
+      <div class="hero-info">
+        <h2>判读篇（案例学习+判读原则）</h2>
+        <p>通过典型案例库掌握高频QRS Rest八看原则、Stress七看原则，熟练运用案例分析方法，建立临床判读思维体系。</p>
+        <div class="hero-tags">
+          <span class="hero-tag">案例库5-10个</span>
+          <span class="hero-tag">Rest八看原则</span>
+          <span class="hero-tag">Stress七看原则</span>
+          <span class="hero-tag">案例分析方法</span>
+        </div>
+      </div>
+      <div class="hero-progress">
+        <div class="progress-circle">
+          <svg viewBox="0 0 70 70">
+            <circle class="track" cx="35" cy="35" r="30"/>
+            <circle class="fill" cx="35" cy="35" r="30" data-pct="10"/>
+          </svg>
+          <div class="pct">10%</div>
+        </div>
+        <div style="font-size:12px;color:var(--text-muted)">完成进度</div>
+      </div>
+    </div>
+
+    <div class="ecg-container">
+      <div class="ecg-label"><span class="live-dot"></span>高频QRS判读训练 · 案例波形</div>
+      <canvas id="ecg-canvas-2" class="ecg-canvas"></canvas>
+    </div>
+
+    <div class="flow-section">
+      <div class="section-title">判读学习路径</div>
+      <div class="flow-steps">
+        <div class="flow-step" onclick="handleStepClick(this); openContentPanel('case_study')">
+          <div class="step-title">案例库学习</div>
+          <div class="step-desc">5-10个典型病例<br>冠心病·心肌桥·心衰等</div>
+          <div class="step-key">含完整报告+解析</div>
+        </div>
+        <div class="flow-step" onclick="handleStepClick(this)">
+          <div class="step-title">高频QRS Rest八看原则</div>
+          <div class="step-desc">静息态下八项关键判读要素</div>
+          <div class="step-key">静态→动态→高频</div>
+        </div>
+        <div class="flow-step" onclick="handleStepClick(this)">
+          <div class="step-title">高频QRS Stress七看原则</div>
+          <div class="step-desc">运动负荷态七项判读要素</div>
+          <div class="step-key">动态→振幅→变化率</div>
+        </div>
+        <div class="flow-step" onclick="handleStepClick(this)">
+          <div class="step-title">案例分析方法</div>
+          <div class="step-desc">病史→检查→HF-QRS<br>→微观机制→诊断/决策</div>
+          <div class="step-key">完整临床判读链</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rest八看/Stress七看 -->
+    <div class="cards-grid">
+      <div class="content-card">
+        <div class="card-header">
+          <div class="card-icon">👁️</div>
+          <div>
+            <div class="card-title">Rest 八看原则</div>
+            <div class="card-sub">静息状态高频QRS判读八要素</div>
+          </div>
+          <span class="card-badge badge-key">8项</span>
+        </div>
+        <div class="card-body">
+          <div class="card-points">
+            <div class="point-item"><div class="point-dot"></div>①看振幅：最大电压、颜色、阳性数量</div>
+            <div class="point-item"><div class="point-dot"></div>②看频率：高频形态指数评分</div>
+            <div class="point-item"><div class="point-dot"></div>③看导联：导联别、碎裂分布模式</div>
+            <div class="point-item"><div class="point-dot"></div>④看QRS时限：波宽均值</div>
+            <div class="point-item"><div class="point-dot"></div>⑤看ST：最大压低值与导联分布</div>
+            <div class="point-item"><div class="point-dot"></div>⑥看波峰：用药·最大电压·颜色</div>
+            <div class="point-item"><div class="point-dot"></div>⑦看节律：QRS平均电压比值（波谷/波峰）</div>
+            <div class="point-item"><div class="point-dot"></div>⑧看整体：QRS时域时频整合分析</div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span style="font-size:12px;color:var(--text-muted)">静息判读专训</span>
+          <button class="card-action">开始训练 →</button>
+        </div>
+      </div>
+
+      <div class="content-card">
+        <div class="card-header">
+          <div class="card-icon">🏃</div>
+          <div>
+            <div class="card-title">Stress 七看原则</div>
+            <div class="card-sub">运动负荷高频QRS判读七要素</div>
+          </div>
+          <span class="card-badge badge-key">7项</span>
+        </div>
+        <div class="card-body">
+          <div class="card-points">
+            <div class="point-item"><div class="point-dot"></div>①运动状态下振幅变化趋势（增/减/平）</div>
+            <div class="point-item"><div class="point-dot"></div>②钟恢复→钟恢复（HRR指标）</div>
+            <div class="point-item"><div class="point-dot"></div>③用药·最大电压·颜色</div>
+            <div class="point-item"><div class="point-dot"></div>④最大心率·最大心率（MHR%目标达成）</div>
+            <div class="point-item"><div class="point-dot"></div>⑤颜色·阳性数量（各阶段对比）</div>
+            <div class="point-item"><div class="point-dot"></div>⑥波形·振幅/电压（运动-恢复曲线）</div>
+            <div class="point-item"><div class="point-dot"></div>⑦ST段变化（最大压低值/出现导联）</div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span style="font-size:12px;color:var(--text-muted)">运动负荷判读专训</span>
+          <button class="card-action">开始训练 →</button>
+        </div>
+      </div>
+
+      <div class="content-card" onclick="openContentPanel('case_study')">
+        <div class="card-header">
+          <div class="card-icon">🗃️</div>
+          <div>
+            <div class="card-title">典型案例库</div>
+            <div class="card-sub">5-10个临床真实案例</div>
+          </div>
+          <span class="card-badge badge-new">10案例</span>
+        </div>
+        <div class="card-body">
+          <div class="card-points">
+            <div class="point-item"><div class="point-dot"></div>冠心病（微循环/冠微血管病）</div>
+            <div class="point-item"><div class="point-dot"></div>心肌桥（运动诱发缺血）</div>
+            <div class="point-item"><div class="point-dot"></div>心衰（收缩/舒张功能障碍）</div>
+            <div class="point-item"><div class="point-dot"></div>药前后对比（β受体阻滞剂效果评估）</div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span style="font-size:12px;color:var(--text-muted)">含完整报告解析</span>
+          <button class="card-action">进入案例库 →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 模块4：应用篇-宏观 ===== -->
+  <div id="mod-macro" class="module-view">
+    <div class="module-hero gold">
+      <div class="hero-icon gold">🎯</div>
+      <div class="hero-info">
+        <h2>应用篇-宏观（五个精准）</h2>
+        <p>掌握精准预警、精准分诊、精准诊断、精准治疗、精准预后五维一体的临床应用体系，提升CMI、DRG/DIP评价指标。</p>
+        <div class="hero-tags">
+          <span class="hero-tag">精准预警</span>
+          <span class="hero-tag">精准分诊</span>
+          <span class="hero-tag">精准诊断</span>
+          <span class="hero-tag">精准治疗</span>
+          <span class="hero-tag">精准预后</span>
+        </div>
+      </div>
+      <div class="hero-progress">
+        <div class="progress-circle">
+          <svg viewBox="0 0 70 70">
+            <circle class="track" cx="35" cy="35" r="30"/>
+            <circle class="fill" cx="35" cy="35" r="30" data-pct="5"/>
+          </svg>
+          <div class="pct">5%</div>
+        </div>
+        <div style="font-size:12px;color:var(--text-muted)">完成进度</div>
+      </div>
+    </div>
+
+    <!-- 关键训练点：CMI/DRG/DIP -->
+    <div class="consensus-block" style="border-color:rgba(214,158,46,0.3);background:linear-gradient(135deg,rgba(214,158,46,0.08),rgba(214,158,46,0.03))">
+      <div class="consensus-icon">💡</div>
+      <div>
+        <div class="consensus-title" style="color:var(--gold)">关键训练点：如何提高CMI？如何辅助DRG/DIP达标？</div>
+        <div class="consensus-body">CMI（病例组合指数）反映医院病例疑难复杂程度。高频QRS的精准诊断能力有助于提高诊断编码精准度，从而提升CMI值、优化DRG/DIP入组，实现医疗质量与经济效益双提升。</div>
+      </div>
+    </div>
+
+    <!-- 五精准 -->
+    <div class="section-title">五个精准临床应用体系</div>
+    <div class="five-precise">
+      <div class="precise-card" onclick="openPanel({title:'精准预警', html:`<div class='key-point-list'><div class='key-point'><div class='key-point-title'>静息高频QRS+ECG对急诊/诊诊主要心血管不良死亡高风险的快速筛查流程</div><div class='key-point-body'>针对急诊胸痛患者：在常规心电图基础上叠加高频QRS分析，可将心肌梗死早期诊断时间缩短30-45分钟，识别高危患者比例提升22%。</div></div></div>`})">
+        <div class="precise-num">01</div>
+        <div class="precise-icon">🚨</div>
+        <div class="precise-title">精准预警</div>
+        <div class="precise-desc">高风险快速筛查<br>急诊流程优化</div>
+      </div>
+      <div class="precise-card" onclick="openPanel({title:'精准分诊', html:`<div class='key-point-list'><div class='key-point'><div class='key-point-title'>高频QRS对冠脉狭窄及心肌缺血的定性定型定位的辅助诊断评价</div><div class='key-point-body'>1. 对冠心病（ACS）的辅助诊断，敏感性82%，特异性76%；2. 对急性冠脉综合征的辅助鉴别；3. 对CMVD（心肌微血管障碍）的辅助诊断（无创检测首选）。</div></div></div>`})">
+        <div class="precise-num">02</div>
+        <div class="precise-icon">🔍</div>
+        <div class="precise-title">精准分诊</div>
+        <div class="precise-desc">冠脉狭窄定位<br>缺血定性定型</div>
+      </div>
+      <div class="precise-card" onclick="openPanel({title:'精准诊断', html:`<div class='key-point-list'><div class='key-point'><div class='key-point-title'>高频QRS在PCI围术期的应用及分析</div><div class='key-point-body'>PCI术前：明确缺血范围及程度，指导介入策略。PCI术后即时：评估血运重建效果（成功指标：HF-QRS振幅恢复≥15%）。术后随访：早期发现再狭窄（振幅再次下降）。</div></div><div class='key-point'><div class='key-point-title'>高频QRS对ICD患者的评估</div><div class='key-point-body'>ICD植入前风险分层、植入后参数优化、除颤阈值预测，指导ICD程控参数设置。</div></div></div>`})">
+        <div class="precise-num">03</div>
+        <div class="precise-icon">🎯</div>
+        <div class="precise-title">精准诊断</div>
+        <div class="precise-desc">PCI围术期评估<br>ICD患者管理</div>
+      </div>
+      <div class="precise-card" onclick="openPanel({title:'精准治疗', html:`<div class='key-point-list'><div class='key-point'><div class='key-point-title'>药物治疗效果监测</div><div class='key-point-body'>利用高频QRS对药物的高敏感性，动态监测β受体阻滞剂、他汀类、ACEI/ARB的疗效，实现剂量个体化优化。建议每3个月复查一次高频QRS评估治疗反应。</div></div></div>`})">
+        <div class="precise-num">04</div>
+        <div class="precise-icon">💊</div>
+        <div class="precise-title">精准治疗</div>
+        <div class="precise-desc">药物疗效监测<br>治疗方案优化</div>
+      </div>
+      <div class="precise-card" onclick="openPanel({title:'精准预后', html:`<div class='key-point-list'><div class='key-point'><div class='key-point-title'>高频QRS对已知CAD患者的预后管理及MACE事件防范价值</div><div class='key-point-body'>MACE（主要不良心血管事件）：死亡、非致死性心肌梗死、血运重建。高频QRS振幅持续下降是MACE的独立预测因子（HR=2.3，95%CI：1.6-3.4，P<0.001）。建议年度随访频率根据危险分层调整。</div></div></div>`})">
+        <div class="precise-num">05</div>
+        <div class="precise-icon">📈</div>
+        <div class="precise-title">精准预后</div>
+        <div class="precise-desc">MACE风险预测<br>长期随访管理</div>
+      </div>
+    </div>
+
+    <!-- 评分结构图 -->
+    <div class="section-title">学习评分结构（智慧反馈）</div>
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:24px">
+      <div class="score-chart">
+        <div class="score-row">
+          <div class="score-label">基础实操篇 (15%)</div>
+          <div class="score-bar-wrap"><div class="score-bar" style="width:45%;background:linear-gradient(90deg,#63b3ed,#4299e1)">45%</div></div>
+          <div class="score-pct">15%</div>
+        </div>
+        <div class="score-row">
+          <div class="score-label">理论篇 (40%)</div>
+          <div class="score-bar-wrap"><div class="score-bar" style="width:40%;background:linear-gradient(90deg,#f6c358,#d69e2e)">40%</div></div>
+          <div class="score-pct">40%</div>
+        </div>
+        <div class="score-row">
+          <div class="score-label">判读篇 (20%)</div>
+          <div class="score-bar-wrap"><div class="score-bar" style="width:20%;background:linear-gradient(90deg,#fc8181,#e53e3e)">20%</div></div>
+          <div class="score-pct">20%</div>
+        </div>
+        <div class="score-row">
+          <div class="score-label">应用篇 (25%)</div>
+          <div class="score-bar-wrap"><div class="score-bar" style="width:25%;background:linear-gradient(90deg,#68d391,#38a169)">25%</div></div>
+          <div class="score-pct">25%</div>
+        </div>
+      </div>
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:12px;color:var(--text-muted)">
+        智慧反馈：<span style="color:var(--gold)">理论掌握度（三个三角模型、五个精准：DRG/DIP）占比最高（40%），是核心考核重点。</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 模块5：考核篇 ===== -->
+  <div id="mod-exam" class="module-view">
+    <div class="module-hero" style="background:linear-gradient(135deg,#1a1040,#2d1b69);border-color:#553c9a">
+      <div class="hero-icon purple">📝</div>
+      <div class="hero-info">
+        <h2>考核篇（理论回溯）</h2>
+        <p>双模式考核系统：章节单元考核与剧情化穿插考核，通过完整的虚拟患者诊疗流程巩固全部学习内容。</p>
+        <div class="hero-tags">
+          <span class="hero-tag">模式A：章节考核</span>
+          <span class="hero-tag">模式B：剧情考核</span>
+          <span class="hero-tag">智慧反馈</span>
+          <span class="hero-tag">成绩分析</span>
+        </div>
+      </div>
+      <div class="hero-progress">
+        <div class="progress-circle">
+          <svg viewBox="0 0 70 70">
+            <circle class="track" cx="35" cy="35" r="30"/>
+            <circle class="fill" cx="35" cy="35" r="30" data-pct="0"/>
+          </svg>
+          <div class="pct">0%</div>
+        </div>
+        <div style="font-size:12px;color:var(--text-muted)">考核进度</div>
+      </div>
+    </div>
+
+    <!-- 双模式考核 -->
+    <div class="section-title">考核模式选择</div>
+    <div class="exam-modes">
+      <div class="exam-card" style="border-color:rgba(99,179,237,0.3)">
+        <div class="exam-mode-label">MODE A</div>
+        <div class="exam-title">📚 模式A：每篇章节考核</div>
+        <div class="exam-desc">每完成一章—第四章，分别进行单元考核。系统性评估各模块掌握程度，即时反馈薄弱知识点。</div>
+        <div class="exam-features">
+          <div class="exam-feature"><div class="feature-dot"></div>基础实操篇单元考核（操作流程/规范）</div>
+          <div class="exam-feature"><div class="feature-dot"></div>进阶微观篇单元考核（三角模型/机制）</div>
+          <div class="exam-feature"><div class="feature-dot"></div>判读篇单元考核（八看/七看原则）</div>
+          <div class="exam-feature"><div class="feature-dot"></div>应用宏观篇单元考核（五精准/CMI）</div>
+        </div>
+        <button class="exam-start-btn" onclick="startExam('A')">开始模式A考核 →</button>
+      </div>
+
+      <div class="exam-card" style="border-color:rgba(214,158,46,0.3)">
+        <div class="exam-mode-label">MODE B</div>
+        <div class="exam-title">🎭 模式B：剧情化穿插考核</div>
+        <div class="exam-desc">设计一个虚拟病人从急诊到出院的完整诊疗流程。在关键决策点（分诊、用药、治疗、预后）穿插考核，高度还原临床真实场景。</div>
+        <div class="exam-features">
+          <div class="exam-feature"><div class="feature-dot" style="background:var(--gold)"></div>急诊接诊→高频QRS检测→分诊决策</div>
+          <div class="exam-feature"><div class="feature-dot" style="background:var(--gold)"></div>冠脉造影结果→PCI方案→围术期评估</div>
+          <div class="exam-feature"><div class="feature-dot" style="background:var(--gold)"></div>药物治疗方案→疗效监测→剂量优化</div>
+          <div class="exam-feature"><div class="feature-dot" style="background:var(--gold)"></div>出院随访计划→预后分层→MACE预防</div>
+        </div>
+        <button class="exam-start-btn" style="background:linear-gradient(135deg,#d69e2e,#f6c358);color:#1a1a1a" onclick="startExam('B')">开始模式B考核 →</button>
+      </div>
+    </div>
+
+    <!-- 智慧反馈说明 -->
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:24px">
+      <div class="section-title" style="margin-bottom:14px">智慧反馈体系</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div style="padding:14px;background:var(--bg-card2);border-radius:8px">
+          <div style="font-size:13px;font-weight:600;color:var(--highlight);margin-bottom:8px">📊 生成式总结</div>
+          <div style="font-size:12px;color:var(--text-muted);line-height:1.6">基于答题结果自动生成个性化学习报告，指出薄弱知识点，推荐复习路径。</div>
+        </div>
+        <div style="padding:14px;background:var(--bg-card2);border-radius:8px">
+          <div style="font-size:13px;font-weight:600;color:var(--gold);margin-bottom:8px">🏆 成绩单</div>
+          <div style="font-size:12px;color:var(--text-muted);line-height:1.6">理论掌握程度（40%）、操作规范（15%）、判读能力（20%）、临床应用（25%）综合评分。</div>
+        </div>
+        <div style="padding:14px;background:var(--bg-card2);border-radius:8px">
+          <div style="font-size:13px;font-weight:600;color:#68d391;margin-bottom:8px">🔄 错题回溯</div>
+          <div style="font-size:12px;color:var(--text-muted);line-height:1.6">自动收录错题，链接对应知识点视频片段，支持针对性反复练习直至掌握。</div>
+        </div>
+        <div style="padding:14px;background:var(--bg-card2);border-radius:8px">
+          <div style="font-size:13px;font-weight:600;color:#b794f4;margin-bottom:8px">📱 整体提升建议</div>
+          <div style="font-size:12px;color:var(--text-muted);line-height:1.6">理论掌握度（三个三角+五精准+DRG/DIP）为核心，操作规范性（信号识别+操作流程）为基础。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main-container -->
+
+<script src="js/app.js"></script>
+</body>
+</html>
