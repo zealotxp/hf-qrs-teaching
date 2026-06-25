@@ -1,6 +1,6 @@
 {
   "name": "hf-qrs-teaching",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "高频QRS技术虚拟仿真教学系统 - HF-QRS Virtual Simulation Teaching System",
   "private": true,
   "scripts": {
