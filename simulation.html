@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高频QRS技术虚拟仿真训练系统</title>
+<style>
+:root {
+  --bg: #0f1724;
+  --bg-card: #1a2538;
+  --bg-card2: #151e30;
+  --border: #2a3b55;
+  --text: #e2e8f0;
+  --text-muted: #7a8fa8;
+  --teal: #1d9e75;
+  --teal-light: #5dcaa5;
+  --blue: #378add;
+  --blue-light: #85b7eb;
+  --red: #e24b4a;
+  --red-light: #f09595;
+  --gold: #d69e2e;
+  --gold-light: #f6c358;
+  --purple: #7f77dd;
+  --purple-light: #afaaec;
+  --green: #639922;
+  --green-light: #97c459;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== 顶部栏 ===== */
+.top-bar {
+  height: 48px;
+  background: linear-gradient(135deg, #0a1628, #162a4a);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  flex-shrink: 0;
+  z-index: 100;
+}
+.top-bar-left { display:flex; align-items:center; gap:10px; }
+.logo-box {
+  width: 30px; height: 30px;
+  background: var(--red);
+  border-radius: 6px;
+  display:flex; align-items:center; justify-content:center;
+  font-size: 14px; font-weight: 700; color: #fff;
+}
+.top-title { font-size: 15px; font-weight: 600; color: #fff; letter-spacing: 1px; }
+.top-sub { font-size: 11px; color: var(--text-muted); margin-left: 4px; }
+.top-bar-center { display:flex; align-items:center; gap:8px; }
+.timer-box {
+  background: var(--bg-card2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+  color: var(--gold-light);
+  letter-spacing: 1px;
+}
+.timer-label { font-size: 10px; color: var(--text-muted); margin-right: 4px; font-weight: 400; }
+.ctrl-btn {
+  width: 30px; height: 30px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition: all 0.2s;
+}
+.ctrl-btn:hover { background: var(--border); }
+.ctrl-btn.active { background: var(--teal); border-color: var(--teal); color: #fff; }
+.top-bar-right { display:flex; align-items:center; gap:8px; }
+
+/* ===== 主区域 ===== */
+.main-sim {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* ===== 左侧工具栏 ===== */
+.left-tools {
+  width: 64px;
+  background: var(--bg-card2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 0;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.tool-btn {
+  width: 48px; height: 48px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-muted);
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+.tool-btn:hover { border-color: var(--blue); color: var(--text); }
+.tool-btn.active { border-color: var(--teal); background: rgba(29,158,117,0.15); color: var(--teal-light); }
+.tool-btn .icon { font-size: 18px; }
+.tool-btn .badge {
+  position: absolute;
+  top: 2px; right: 2px;
+  width: 14px; height: 14px;
+  background: var(--red);
+  border-radius: 50%;
+  font-size: 9px;
+  color: #fff;
+  display:flex; align-items:center; justify-content:center;
+}
+
+/* ===== 中央场景区 ===== */
+.scene-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+/* 生命体征条 */
+.vitals-bar {
+  height: 56px;
+  background: var(--bg-card2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 16px;
+  flex-shrink: 0;
+}
+.vital-item { display:flex; align-items:center; gap:6px; }
+.vital-icon { font-size: 16px; }
+.vital-data { display:flex; flex-direction:column; }
+.vital-label { font-size: 10px; color: var(--text-muted); }
+.vital-value { font-size: 13px; font-weight: 600; font-family: 'Courier New',monospace; }
+.vital-value.normal { color: var(--teal-light); }
+.vital-value.warn { color: var(--gold-light); }
+.vital-value.danger { color: var(--red-light); }
+.ecg-mini { flex:1; height: 36px; position: relative; }
+.ecg-mini canvas { width:100%; height:100%; }
+
+/* 场景主体 */
+.scene-body {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* 场景层 */
+.scene-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.5s;
+  pointer-events: none;
+}
+.scene-layer.active { opacity: 1; pointer-events: all; }
+
+/* 场景1: 诊室 */
+.room-scene {
+  width: 100%; height: 100%;
+  background: linear-gradient(180deg, #1a2538 0%, #0f1724 100%);
+  position: relative;
+}
+.room-window {
+  position: absolute; top: 8%; left: 10%; right: 10%; height: 35%;
+  background: linear-gradient(180deg, #0a1a2e 0%, #122540 100%);
+  border: 2px solid #2a3b55;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.room-window::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 40%;
+  background: linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.03) 100%);
+}
+.room-plant {
+  position: absolute; bottom: 20%; left: 12%;
+  width: 80px; height: 120px;
+  background: radial-gradient(ellipse at 50% 100%, #1d5a3a 0%, transparent 70%);
+  border-radius: 50% 50% 0 0;
+  opacity: 0.7;
+}
+.room-table {
+  position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%);
+  width: 280px; height: 90px;
+  background: #1e2d42;
+  border: 1px solid #2a3b55;
+  border-radius: 4px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+.room-table::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #2a3b55, #3a5a75, #2a3b55);
+  border-radius: 4px 4px 0 0;
+}
+.room-bed {
+  position: absolute; bottom: 12%; left: 65%;
+  width: 140px; height: 60px;
+  background: #1a2e45;
+  border: 1px solid #2a3b55;
+  border-radius: 8px 8px 4px 4px;
+}
+.room-bed::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 10px;
+  background: #2a3b55; border-radius: 8px 8px 0 0;
+}
+/* 虚拟病人 */
+.avatar-patient {
+  position: absolute; bottom: 28%; left: 50%; transform: translateX(-50%);
+  width: 80px; height: 160px;
+  display: flex; flex-direction: column; align-items: center;
+}
+.avatar-head {
+  width: 40px; height: 44px;
+  background: linear-gradient(180deg, #d4a574 0%, #b8864b 100%);
+  border-radius: 50% 50% 45% 45%;
+  position: relative;
+  z-index: 2;
+}
+.avatar-head::before {
+  content: '';
+  position: absolute; top: 12px; left: 8px; width: 8px; height: 6px;
+  background: #3a2a1a; border-radius: 50%;
+  box-shadow: 16px 0 0 #3a2a1a;
+}
+.avatar-head::after {
+  content: '';
+  position: absolute; top: 24px; left: 50%; transform: translateX(-50%);
+  width: 10px; height: 5px;
+  background: #a07050; border-radius: 0 0 50% 50%;
+}
+.avatar-body {
+  width: 50px; height: 80px;
+  background: linear-gradient(180deg, #1a3a6b 0%, #0f2040 100%);
+  border-radius: 12px 12px 4px 4px;
+  margin-top: -6px;
+  z-index: 1;
+  border: 1px solid #2a3b55;
+  position: relative;
+}
+.avatar-body::after {
+  content: '';
+  position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+  width: 30px; height: 2px;
+  background: rgba(255,255,255,0.2); border-radius: 1px;
+}
+
+/* 场景2: 检测准备 (病床上) */
+.exam-scene {
+  width: 100%; height: 100%;
+  background: linear-gradient(180deg, #182538 0%, #0f1724 100%);
+  position: relative;
+}
+.exam-bed {
+  position: absolute; bottom: 12%; left: 50%; transform: translateX(-50%);
+  width: 360px; height: 100px;
+  background: #1a2e45;
+  border: 1px solid #2a3b55;
+  border-radius: 12px 12px 6px 6px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+.exam-bed::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 14px;
+  background: #2a3b55; border-radius: 12px 12px 0 0;
+}
+.exam-bed::after {
+  content: '';
+  position: absolute; top: 20px; left: 20px; right: 20px; bottom: 10px;
+  background: #152540; border-radius: 4px;
+  border: 1px solid rgba(42,59,85,0.5);
+}
+/* 病人躺姿 */
+.patient-lying {
+  position: absolute; bottom: 18%; left: 50%; transform: translateX(-50%);
+  width: 180px; height: 70px;
+}
+.pl-head {
+  position: absolute; left: 0; top: 10px;
+  width: 36px; height: 36px;
+  background: linear-gradient(180deg, #d4a574, #b8864b);
+  border-radius: 50%;
+  z-index: 3;
+}
+.pl-head::before {
+  content: '';
+  position: absolute; top: 10px; left: 7px; width: 7px; height: 5px;
+  background: #3a2a1a; border-radius: 50%;
+  box-shadow: 14px 0 0 #3a2a1a;
+}
+.pl-body {
+  position: absolute; left: 28px; top: 15px;
+  width: 120px; height: 40px;
+  background: linear-gradient(180deg, #1a3a6b, #0f2040);
+  border-radius: 20px;
+  z-index: 2;
+  border: 1px solid #2a3b55;
+}
+.pl-legs {
+  position: absolute; right: 0; top: 18px;
+  width: 40px; height: 32px;
+  background: linear-gradient(180deg, #1a3a6b, #0f2040);
+  border-radius: 0 10px 10px 0;
+  z-index: 2;
+  border: 1px solid #2a3b55;
+}
+/* 电极 */
+.electrode {
+  position: absolute;
+  width: 10px; height: 10px;
+  background: var(--gold);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--gold-light);
+  animation: pulseElec 2s infinite;
+  z-index: 4;
+}
+.electrode.v1 { left: 42%; top: 22%; }
+.electrode.v2 { left: 48%; top: 24%; }
+.electrode.v3 { left: 54%; top: 26%; }
+.electrode.v4 { left: 44%; top: 30%; }
+.electrode.v5 { left: 50%; top: 32%; }
+.electrode.v6 { left: 56%; top: 34%; }
+.electrode.ra { left: 38%; top: 20%; }
+.electrode.la { left: 60%; top: 20%; }
+.electrode.rl { left: 40%; top: 36%; }
+.electrode.ll { left: 58%; top: 36%; }
+@keyframes pulseElec {
+  0%, 100% { box-shadow: 0 0 4px var(--gold-light); opacity: 1; }
+  50% { box-shadow: 0 0 12px var(--gold-light); opacity: 0.6; }
+}
+
+/* 场景3: 运动检测 */
+.run-scene {
+  width: 100%; height: 100%;
+  background: linear-gradient(180deg, #0f1724 0%, #1a2d44 50%, #0f1724 100%);
+  position: relative;
+}
+.treadmill {
+  position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%);
+  width: 300px; height: 80px;
+  background: #1a2d44;
+  border: 1px solid #2a3b55;
+  border-radius: 8px;
+  box-shadow: 0 0 30px rgba(0,0,0,0.6);
+}
+.treadmill::before {
+  content: '';
+  position: absolute; top: 8px; left: 8px; right: 8px; bottom: 8px;
+  background: repeating-linear-gradient(
+    90deg,
+    #152540 0px,
+    #152540 8px,
+    #1a2d44 8px,
+    #1a2d44 16px
+  );
+  border-radius: 4px;
+  animation: beltRun 0.5s linear infinite;
+}
+@keyframes beltRun {
+  from { background-position: 0 0; }
+  to { background-position: 16px 0; }
+}
+.treadmill::after {
+  content: '';
+  position: absolute; top: -20px; left: 20px; right: 20px;
+  height: 20px;
+  background: #2a3b55; border-radius: 4px 4px 0 0;
+}
+.patient-running {
+  position: absolute; bottom: 28%; left: 50%; transform: translateX(-50%);
+  width: 60px; height: 100px;
+}
+.pr-head {
+  width: 28px; height: 30px;
+  background: linear-gradient(180deg, #d4a574, #b8864b);
+  border-radius: 50%; margin: 0 auto;
+  position: relative;
+}
+.pr-body {
+  width: 36px; height: 50px;
+  background: linear-gradient(180deg, #1a3a6b, #0f2040);
+  border-radius: 8px; margin: 4px auto 0;
+  border: 1px solid #2a3b55;
+}
+.pr-leg-l, .pr-leg-r {
+  width: 12px; height: 30px;
+  background: linear-gradient(180deg, #1a3a6b, #0f2040);
+  border-radius: 6px;
+  position: absolute; bottom: -10px;
+  border: 1px solid #2a3b55;
+  animation: runLeg 0.8s infinite alternate;
+}
+.pr-leg-l { left: 6px; }
+.pr-leg-r { right: 6px; animation-delay: 0.4s; }
+@keyframes runLeg {
+  from { transform: rotate(-15deg); }
+  to { transform: rotate(15deg); }
+}
+
+/* 场景4: 判读台 */
+.read-scene {
+  width: 100%; height: 100%;
+  background: linear-gradient(180deg, #151e30 0%, #0f1724 100%);
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.monitor-screen {
+  width: 80%; max-width: 700px;
+  background: #0a1628;
+  border: 2px solid #2a3b55;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 0 40px rgba(0,0,0,0.6);
+}
+.monitor-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #1a2d44;
+}
+.monitor-title { font-size: 14px; font-weight: 600; color: var(--teal-light); }
+.monitor-patient { font-size: 11px; color: var(--text-muted); }
+.report-ecg { width: 100%; height: 120px; margin-bottom: 16px; }
+.report-data-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.report-data-item {
+  background: var(--bg-card2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px;
+  text-align: center;
+}
+.report-data-item .val { font-size: 16px; font-weight: 600; font-family: monospace; color: var(--teal-light); }
+.report-data-item .lbl { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+.report-result {
+  background: rgba(29,158,117,0.1);
+  border: 1px solid rgba(29,158,117,0.3);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: var(--teal-light);
+}
+
+/* 场景标签 */
+.scene-label {
+  position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+  padding: 6px 20px;
+  background: var(--bg-card2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  z-index: 10;
+}
+
+/* ===== 右侧操作面板 ===== */
+.right-panel {
+  width: 320px;
+  background: var(--bg-card2);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.panel-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 16px;
+}
+.panel-body::-webkit-scrollbar { width: 4px; }
+.panel-body::-webkit-scrollbar-track { background: transparent; }
+.panel-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* 操作按钮网格 */
+.op-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.op-btn {
+  padding: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.op-btn:hover { border-color: var(--blue); background: rgba(55,138,221,0.08); }
+.op-btn.active { border-color: var(--teal); background: rgba(29,158,117,0.15); }
+.op-btn .icon { font-size: 20px; }
+.op-btn .txt { font-size: 11px; color: var(--text-muted); }
+
+/* 步骤列表 */
+.step-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.step-item {
+  padding: 10px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 12px;
+}
+.step-item:hover { border-color: var(--blue); }
+.step-item.active { border-color: var(--teal); background: rgba(29,158,117,0.1); }
+.step-item.completed { border-color: var(--green); }
+.step-item.completed .step-check { color: var(--green-light); }
+.step-check { width: 18px; text-align: center; font-size: 14px; flex-shrink: 0; }
+.step-text { flex: 1; }
+.step-hint { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+/* 问答面板 */
+.qa-list { display: flex; flex-direction: column; gap: 6px; }
+.qa-item {
+  padding: 10px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  line-height: 1.5;
+}
+.qa-item:hover { border-color: var(--blue); background: rgba(55,138,221,0.08); }
+.qa-item.selected { border-color: var(--teal); background: rgba(29,158,117,0.15); }
+
+/* 底部步骤条 */
+.bottom-steps {
+  height: 60px;
+  background: var(--bg-card2);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
+  gap: 0;
+  flex-shrink: 0;
+}
+.bottom-step {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  cursor: pointer;
+}
+.bs-circle {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600;
+  color: var(--text-muted);
+  transition: all 0.3s;
+  flex-shrink: 0;
+}
+.bs-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  margin-left: 6px;
+  margin-right: 6px;
+}
+.bs-line {
+  width: 40px; height: 2px;
+  background: var(--border);
+  transition: all 0.3s;
+}
+.bottom-step.active .bs-circle { border-color: var(--teal); background: var(--teal); color: #fff; }
+.bottom-step.active .bs-label { color: var(--teal-light); }
+.bottom-step.completed .bs-circle { border-color: var(--green); background: var(--green); color: #fff; }
+.bottom-step.completed .bs-line { background: var(--green); }
+
+/* 提示气泡 */
+.tip-bubble {
+  position: absolute;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: var(--text);
+  max-width: 220px;
+  z-index: 50;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  animation: tipPop 0.3s ease;
+}
+.tip-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -6px; left: 20px;
+  width: 10px; height: 10px;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  transform: rotate(45deg);
+}
+@keyframes tipPop {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 响应式 */
+@media (max-width: 1100px) {
+  .right-panel { width: 260px; }
+}
+@media (max-width: 900px) {
+  .right-panel { display: none; }
+  .left-tools { width: 52px; }
+  .tool-btn { width: 40px; height: 40px; font-size: 9px; }
+  .tool-btn .icon { font-size: 14px; }
+}
+</style>
+</head>
+<body>
+
+<!-- 顶部栏 -->
+<div class="top-bar">
+  <div class="top-bar-left">
+    <div class="logo-box">QRS</div>
+    <div>
+      <div class="top-title">高频QRS技术虚拟仿真训练系统</div>
+      <div class="top-sub">基于虚拟病人的交互式训练</div>
+    </div>
+  </div>
+  <div class="top-bar-center">
+    <span class="timer-label">操作用时</span>
+    <div class="timer-box" id="timerBox">00:00:00</div>
+    <button class="ctrl-btn" id="btnPlay" onclick="togglePlay()">▶</button>
+    <button class="ctrl-btn" onclick="resetSim()">↺</button>
+  </div>
+  <div class="top-bar-right">
+    <a href="index.html" style="text-decoration:none"><button class="ctrl-btn" title="返回课程">◀</button></a>
+    <button class="ctrl-btn" title="全屏">⛶</button>
+  </div>
+</div>
+
+<!-- 主区域 -->
+<div class="main-sim">
+  <!-- 左侧工具栏 -->
+  <div class="left-tools">
+    <div class="tool-btn active" data-tool="train" onclick="switchTool(this,'train')">
+      <div class="icon">📋</div>
+      <div>诊疗</div>
+    </div>
+    <div class="tool-btn" data-tool="knowledge" onclick="switchTool(this,'knowledge')">
+      <div class="icon">📚</div>
+      <div>常识</div>
+    </div>
+    <div class="tool-btn" data-tool="exam" onclick="switchTool(this,'exam')">
+      <div class="icon">📝</div>
+      <div>考核</div>
+    </div>
+    <div class="tool-btn" data-tool="help" onclick="switchTool(this,'help')">
+      <div class="icon">❓</div>
+      <div>帮助</div>
+    </div>
+  </div>
+
+  <!-- 中央场景区 -->
+  <div class="scene-area">
+    <!-- 生命体征 -->
+    <div class="vitals-bar">
+      <div class="vital-item">
+        <div class="vital-icon">❤</div>
+        <div class="vital-data">
+          <div class="vital-label">HR</div>
+          <div class="vital-value normal" id="valHR">72</div>
+        </div>
+      </div>
+      <div class="vital-item">
+        <div class="vital-icon">🩺</div>
+        <div class="vital-data">
+          <div class="vital-label">BP</div>
+          <div class="vital-value normal" id="valBP">120/80</div>
+        </div>
+      </div>
+      <div class="vital-item">
+        <div class="vital-icon">O₂</div>
+        <div class="vital-data">
+          <div class="vital-label">SpO₂</div>
+          <div class="vital-value normal" id="valSpO2">98</div>
+        </div>
+      </div>
+      <div class="vital-item">
+        <div class="vital-icon">🫁</div>
+        <div class="vital-data">
+          <div class="vital-label">Resp</div>
+          <div class="vital-value normal" id="valResp">16</div>
+        </div>
+      </div>
+      <div class="vital-item">
+        <div class="vital-icon">🌡</div>
+        <div class="vital-data">
+          <div class="vital-label">Temp</div>
+          <div class="vital-value normal" id="valTemp">36.5</div>
+        </div>
+      </div>
+      <div class="ecg-mini">
+        <canvas id="ecgSim"></canvas>
+      </div>
+    </div>
+
+    <!-- 场景主体 -->
+    <div class="scene-body">
+      <!-- 场景1: 诊室问诊 -->
+      <div class="scene-layer active" id="scene-0">
+        <div class="room-scene">
+          <div class="scene-label">场景：诊室问诊</div>
+          <div class="room-window"></div>
+          <div class="room-plant"></div>
+          <div class="room-table"></div>
+          <div class="room-bed"></div>
+          <div class="avatar-patient">
+            <div class="avatar-head"></div>
+            <div class="avatar-body"></div>
+          </div>
+          <div class="tip-bubble" style="bottom:30%; right:25%; animation-delay:0.5s">
+            医生，我最近胸闷气短，运动后更明显...
+          </div>
+        </div>
+      </div>
+
+      <!-- 场景2: 检测准备 -->
+      <div class="scene-layer" id="scene-1">
+        <div class="exam-scene">
+          <div class="scene-label">场景：检测前准备</div>
+          <div class="exam-bed"></div>
+          <div class="patient-lying">
+            <div class="pl-head"></div>
+            <div class="pl-body"></div>
+            <div class="pl-legs"></div>
+          </div>
+          <div class="electrode v1"></div>
+          <div class="electrode v2"></div>
+          <div class="electrode v3"></div>
+          <div class="electrode v4"></div>
+          <div class="electrode v5"></div>
+          <div class="electrode v6"></div>
+          <div class="electrode ra"></div>
+          <div class="electrode la"></div>
+          <div class="electrode rl"></div>
+          <div class="electrode ll"></div>
+          <div class="tip-bubble" style="top:15%; right:10%">
+            请保持仰卧位，静息1.5分钟，确保基线稳定
+          </div>
+        </div>
+      </div>
+
+      <!-- 场景3: 运动检测 -->
+      <div class="scene-layer" id="scene-2">
+        <div class="run-scene">
+          <div class="scene-label">场景：高频QRS Stress采集</div>
+          <div class="treadmill"></div>
+          <div class="patient-running">
+            <div class="pr-head"></div>
+            <div class="pr-body"></div>
+            <div class="pr-leg-l"></div>
+            <div class="pr-leg-r"></div>
+          </div>
+          <div class="tip-bubble" style="top:15%; left:10%">
+            改良Bruce方案第3阶段：速度3.4mph，坡度14%
+          </div>
+        </div>
+      </div>
+
+      <!-- 场景4: 结果判读 -->
+      <div class="scene-layer" id="scene-3">
+        <div class="read-scene">
+          <div class="scene-label">场景：报告判读</div>
+          <div class="monitor-screen">
+            <div class="monitor-header">
+              <div class="monitor-title">高频QRS分析报告</div>
+              <div class="monitor-patient">患者: 张某 | 男 | 58岁 | 2026-06-23</div>
+            </div>
+            <canvas class="report-ecg" id="reportEcg"></canvas>
+            <div class="report-data-row">
+              <div class="report-data-item"><div class="val" id="rHR">142</div><div class="lbl">最大心率</div></div>
+              <div class="report-data-item"><div class="val" id="rBP">180/95</div><div class="lbl">峰值血压</div></div>
+              <div class="report-data-item"><div class="val" id="rHRR">18</div><div class="lbl">HRR(次/分)</div></div>
+              <div class="report-data-item"><div class="val" id="rScore">72</div><div class="lbl">HF评分</div></div>
+            </div>
+            <div class="report-data-row">
+              <div class="report-data-item"><div class="val" style="color:var(--red-light)">↓23%</div><div class="lbl">高频振幅变化</div></div>
+              <div class="report-data-item"><div class="val" style="color:var(--gold-light)">V2-V5</div><div class="lbl">阳性导联</div></div>
+              <div class="report-data-item"><div class="val" style="color:var(--red-light)">阳性</div><div class="lbl">f-QRS</div></div>
+              <div class="report-data-item"><div class="val" style="color:var(--red-light)">ST↓0.12</div><div class="lbl">ST段压低</div></div>
+            </div>
+            <div class="report-result" id="reportResult">
+              判读结论：高频QRS Stress检测阳性，心肌缺血可能性大。建议进一步行冠脉造影检查。
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 右侧操作面板 -->
+  <div class="right-panel" id="rightPanel">
+    <div class="panel-header" id="panelTitle">病史采集</div>
+    <div class="panel-body" id="panelBody">
+      <!-- 由JS填充 -->
+    </div>
+  </div>
+</div>
+
+<!-- 底部步骤条 -->
+<div class="bottom-steps">
+  <div class="bottom-step active" data-step="0" onclick="gotoStep(0)">
+    <div class="bs-circle">1</div>
+    <div class="bs-label">病史采集</div>
+  </div>
+  <div class="bs-line"></div>
+  <div class="bottom-step" data-step="1" onclick="gotoStep(1)">
+    <div class="bs-circle">2</div>
+    <div class="bs-label">体格检查</div>
+  </div>
+  <div class="bs-line"></div>
+  <div class="bottom-step" data-step="2" onclick="gotoStep(2)">
+    <div class="bs-circle">3</div>
+    <div class="bs-label">辅助检查</div>
+  </div>
+  <div class="bs-line"></div>
+  <div class="bottom-step" data-step="3" onclick="gotoStep(3)">
+    <div class="bs-circle">4</div>
+    <div class="bs-label">Stress采集</div>
+  </div>
+  <div class="bs-line"></div>
+  <div class="bottom-step" data-step="4" onclick="gotoStep(4)">
+    <div class="bs-circle">5</div>
+    <div class="bs-label">入院诊断</div>
+  </div>
+  <div class="bs-line"></div>
+  <div class="bottom-step" data-step="5" onclick="gotoStep(5)">
+    <div class="bs-circle">6</div>
+    <div class="bs-label">入院治疗</div>
+  </div>
+</div>
+
+<script>
+/* ===== 状态 ===== */
+let currentStep = 0;
+let isPlaying = false;
+let timerSec = 0;
+let timerInterval = null;
+let vitalsInterval = null;
+let ecgInterval = null;
+
+/* ===== 步骤数据 ===== */
+const STEP_DATA = [
+  {
+    title: '病史采集',
+    scene: 0,
+    panel: 'qa',
+    questions: [
+      '你来到诊室多久了？',
+      '哪里不舒服？',
+      '有没有胸闷、胸痛？',
+      '疼不疼？',
+      '是否还有其他症状？例如恶心、呕吐、心悸等？',
+      '什么时候开始不舒服的？',
+      '休息以后有缓解吗？有没有吸氧？',
+      '来医院以后有剧烈运动吗？'
+    ]
+  },
+  {
+    title: '体格检查',
+    scene: 1,
+    panel: 'exam',
+    items: [
+      {icon:'👂',name:'听诊',desc:'心音听诊检查'},
+      {icon:'👁',name:'视诊',desc:'观察皮肤、呼吸'},
+      {icon:'👋',name:'触诊',desc:'触诊脉搏、心尖搏动'},
+      {icon:'👊',name:'叩诊',desc:'心脏浊音界叩诊'}
+    ]
+  },
+  {
+    title: '辅助检查 - 高频QRS Rest',
+    scene: 1,
+    panel: 'rest',
+    steps: [
+      {check:'○', text:'确认患者仰卧位，静息1.5分钟', hint:'确保基线稳定'},
+      {check:'○', text:'12导联电极片精准粘贴', hint:'V1-V6及肢体导联'},
+      {check:'○', text:'高频QRS Rest信号采集（1.5分钟）', hint:'150-250Hz频段'},
+      {check:'○', text:'信号质量检查与噪声识别', hint:'排除肌电/工频干扰'},
+      {check:'○', text:'记录静息高频QRS基线数据', hint:'保存报告'}
+    ]
+  },
+  {
+    title: '辅助检查 - 高频QRS Stress',
+    scene: 2,
+    panel: 'stress',
+    steps: [
+      {check:'○', text:'确认改良Bruce方案参数', hint:'13分钟分阶段'},
+      {check:'○', text:'运动阶段3-9分钟高频监测', hint:'实时QRS振幅变化'},
+      {check:'○', text:'恢复期3分钟持续监测', hint:'钟恢复指标HRR'},
+      {check:'○', text:'运动终止标准确认', hint:'HR/BP/症状阈值'},
+      {check:'○', text:'Stress高频QRS报告生成', hint:'对比Rest基线'}
+    ]
+  },
+  {
+    title: '入院诊断',
+    scene: 3,
+    panel: 'diagnosis',
+    questions: [
+      '根据高频QRS Rest八看原则，静息态判读要点？',
+      '根据高频QRS Stress七看原则，运动态判读要点？',
+      '高频振幅变化率如何计算？',
+      'f-QRS碎裂波阳性标准？',
+      '结合三角模型定位病变？'
+    ]
+  },
+  {
+    title: '入院治疗',
+    scene: 3,
+    panel: 'treatment',
+    items: [
+      {icon:'💊',name:'药物治疗',desc:'β受体阻滞剂/抗血小板'},
+      {icon:'🏥',name:'PCI介入',desc:'冠脉造影+支架植入'},
+      {icon:'📋',name:'康复方案',desc:'运动康复计划制定'},
+      {icon:'🔬',name:'随访监测',desc:'3个月复查高频QRS'}
+    ]
+  }
+];
+
+/* ===== 初始化面板 ===== */
+function renderPanel(stepIdx) {
+  const d = STEP_DATA[stepIdx];
+  document.getElementById('panelTitle').textContent = d.title;
+  const body = document.getElementById('panelBody');
+
+  if (d.panel === 'qa' || d.panel === 'diagnosis') {
+    body.innerHTML = '<div class="qa-list">' + d.questions.map((q,i) =>
+      `<div class="qa-item" onclick="this.classList.toggle('selected')">${q}</div>`
+    ).join('') + '</div>';
+  }
+  else if (d.panel === 'exam' || d.panel === 'treatment') {
+    body.innerHTML = '<div class="op-grid">' + d.items.map(it =>
+      `<div class="op-btn" onclick="this.classList.toggle('active')">
+        <div class="icon">${it.icon}</div>
+        <div style="font-weight:600">${it.name}</div>
+        <div class="txt">${it.desc}</div>
+      </div>`
+    ).join('') + '</div>';
+  }
+  else if (d.panel === 'rest' || d.panel === 'stress') {
+    body.innerHTML = '<div class="step-list">' + d.steps.map((s,i) =>
+      `<div class="step-item" onclick="toggleStepItem(this)">
+        <div class="step-check">${s.check}</div>
+        <div class="step-text">
+          <div>${s.text}</div>
+          <div class="step-hint">${s.hint}</div>
+        </div>
+      </div>`
+    ).join('') + '</div>';
+  }
+}
+
+function toggleStepItem(el) {
+  el.classList.toggle('completed');
+  const check = el.querySelector('.step-check');
+  check.textContent = el.classList.contains('completed') ? '✅' : '○';
+}
+
+/* ===== 场景切换 ===== */
+function gotoStep(stepIdx) {
+  if (stepIdx < 0 || stepIdx >= STEP_DATA.length) return;
+  currentStep = stepIdx;
+
+  // 更新底部步骤条
+  document.querySelectorAll('.bottom-step').forEach((el,i) => {
+    el.classList.remove('active','completed');
+    if (i < stepIdx) el.classList.add('completed');
+    else if (i === stepIdx) el.classList.add('active');
+  });
+
+  // 切换场景
+  const sceneId = STEP_DATA[stepIdx].scene;
+  document.querySelectorAll('.scene-layer').forEach((el,i) => {
+    el.classList.toggle('active', i === sceneId);
+  });
+
+  // 渲染面板
+  renderPanel(stepIdx);
+
+  // 更新生命体征目标值
+  updateVitalsTarget(stepIdx);
+}
+
+let vitalTargets = {hr:72, sys:120, dia:80, spo2:98, resp:16, temp:36.5};
+function updateVitalsTarget(stepIdx) {
+  const targets = [
+    {hr:72, sys:120, dia:80, spo2:98, resp:16, temp:36.5},
+    {hr:68, sys:118, dia:78, spo2:99, resp:14, temp:36.4},
+    {hr:68, sys:118, dia:78, spo2:99, resp:14, temp:36.4},
+    {hr:142, sys:180, dia:95, spo2:96, resp:28, temp:37.2},
+    {hr:95, sys:155, dia:88, spo2:97, resp:22, temp:37.0},
+    {hr:78, sys:130, dia:82, spo2:98, resp:18, temp:36.6}
+  ];
+  vitalTargets = targets[stepIdx] || targets[0];
+}
+
+/* ===== 计时器 ===== */
+function togglePlay() {
+  isPlaying = !isPlaying;
+  const btn = document.getElementById('btnPlay');
+  btn.textContent = isPlaying ? '⏸' : '▶';
+  btn.classList.toggle('active', isPlaying);
+
+  if (isPlaying) {
+    timerInterval = setInterval(() => {
+      timerSec++;
+      const h = String(Math.floor(timerSec/3600)).padStart(2,'0');
+      const m = String(Math.floor((timerSec%3600)/60)).padStart(2,'0');
+      const s = String(timerSec%60).padStart(2,'0');
+      document.getElementById('timerBox').textContent = `${h}:${m}:${s}`;
+    }, 1000);
+    startVitalsAnim();
+  } else {
+    clearInterval(timerInterval);
+    stopVitalsAnim();
+  }
+}
+function resetSim() {
+  isPlaying = false; timerSec = 0;
+  clearInterval(timerInterval);
+  document.getElementById('timerBox').textContent = '00:00:00';
+  document.getElementById('btnPlay').textContent = '▶';
+  document.getElementById('btnPlay').classList.remove('active');
+  gotoStep(0);
+  stopVitalsAnim();
+}
+
+/* ===== 生命体征动画 ===== */
+let currentVitals = {hr:72, sys:120, dia:80, spo2:98, resp:16, temp:36.5};
+const lerp = (cur, tgt, rate) => cur + (tgt - cur) * rate;
+function startVitalsAnim() {
+  vitalsInterval = setInterval(() => {
+    // 向目标值渐变
+    currentVitals.hr = lerp(currentVitals.hr, vitalTargets.hr, 0.08);
+    currentVitals.sys = lerp(currentVitals.sys, vitalTargets.sys, 0.08);
+    currentVitals.dia = lerp(currentVitals.dia, vitalTargets.dia, 0.08);
+    currentVitals.spo2 = lerp(currentVitals.spo2, vitalTargets.spo2, 0.08);
+    currentVitals.resp = lerp(currentVitals.resp, vitalTargets.resp, 0.08);
+    currentVitals.temp = lerp(currentVitals.temp, vitalTargets.temp, 0.08);
+
+    document.getElementById('valHR').textContent = Math.round(currentVitals.hr);
+    document.getElementById('valBP').textContent = `${Math.round(currentVitals.sys)}/${Math.round(currentVitals.dia)}`;
+    document.getElementById('valSpO2').textContent = Math.round(currentVitals.spo2);
+    document.getElementById('valResp').textContent = Math.round(currentVitals.resp);
+    document.getElementById('valTemp').textContent = currentVitals.temp.toFixed(1);
+
+    // 颜色状态
+    const hrEl = document.getElementById('valHR');
+    if (currentVitals.hr > 130) hrEl.className = 'vital-value danger';
+    else if (currentVitals.hr > 100) hrEl.className = 'vital-value warn';
+    else hrEl.className = 'vital-value normal';
+  }, 300);
+}
+function stopVitalsAnim() {
+  clearInterval(vitalsInterval);
+}
+
+/* ===== ECG绘制 ===== */
+function initECG() {
+  const canvas = document.getElementById('ecgSim');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width = canvas.offsetWidth || 200;
+  const H = canvas.height = 36;
+  let points = [];
+  let t = 0;
+
+  function draw() {
+    ctx.fillStyle = 'rgba(15,23,36,0.2)';
+    ctx.fillRect(0, 0, W, H);
+
+    const amp = 1 + (currentVitals.hr - 72) / 50; // 心率越高振幅波动越大
+    const y = H/2 - (Math.sin(t*0.3)*4 + (t%40<3? -8 + Math.sin((t%40)*Math.PI/3)*20 : 0) + Math.sin(t*0.05)*2) * amp;
+    points.push({x: W-1, y});
+    t += 1.5;
+    if (points.length > W) points.shift();
+    points.forEach((p,i) => p.x = i);
+
+    ctx.strokeStyle = '#5dcaa5';
+    ctx.lineWidth = 1;
+    ctx.shadowColor = '#5dcaa5';
+    ctx.shadowBlur = 3;
+    ctx.beginPath();
+    points.forEach((p,i) => { i===0? ctx.moveTo(p.x,p.y): ctx.lineTo(p.x,p.y); });
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+function initReportECG() {
+  const canvas = document.getElementById('reportEcg');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width = canvas.offsetWidth || 600;
+  const H = canvas.height = 120;
+  let points = [];
+  let t = 0;
+
+  function draw() {
+    ctx.fillStyle = '#0a1628';
+    ctx.fillRect(0, 0, W, H);
+
+    // 网格
+    ctx.strokeStyle = 'rgba(0,100,50,0.15)';
+    ctx.lineWidth = 0.5;
+    for (let x=0; x<W; x+=20) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+    for (let y=0; y<H; y+=20) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+    const y = H/2 - (Math.sin(t*0.3)*8 + (t%60<5? -8 + Math.sin((t%60)*Math.PI/5)*30 : 0) + Math.sin(t*0.05)*3);
+    points.push({x: W-1, y});
+    t += 1.5;
+    if (points.length > W) points.shift();
+    points.forEach((p,i) => p.x = i);
+
+    ctx.strokeStyle = '#5dcaa5';
+    ctx.lineWidth = 1.5;
+    ctx.shadowColor = '#5dcaa5';
+    ctx.shadowBlur = 4;
+    ctx.beginPath();
+    points.forEach((p,i) => { i===0? ctx.moveTo(p.x,p.y): ctx.lineTo(p.x,p.y); });
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+/* ===== 工具切换 ===== */
+function switchTool(el, tool) {
+  document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  if (tool === 'train') {
+    renderPanel(currentStep);
+    document.getElementById('rightPanel').style.display = 'flex';
+  } else if (tool === 'knowledge') {
+    showKnowledgePanel();
+  } else if (tool === 'exam') {
+    showExamPanel();
+  } else {
+    showHelpPanel();
+  }
+}
+function showKnowledgePanel() {
+  document.getElementById('panelTitle').textContent = '基础知识库';
+  document.getElementById('panelBody').innerHTML = `
+    <div class="qa-list">
+      <div class="qa-item">📘 高频QRS定义：150-250Hz频段QRS信号分析</div>
+      <div class="qa-item">📘 三个三角模型：内三角（分子机制）/ 铁三角（心功能）/ 外三角（分型）</div>
+      <div class="qa-item">📘 2024版专家共识：各项指标标定义与参考值</div>
+      <div class="qa-item">📘 操作规范：Rest 1.5min + Stress 13min Bruce方案</div>
+      <div class="qa-item">📘 判读原则：Rest八看 + Stress七看</div>
+      <div class="qa-item">📘 临床应用：五精准（预警/分诊/诊断/治疗/预后）</div>
+    </div>`;
+  document.getElementById('rightPanel').style.display = 'flex';
+}
+function showExamPanel() {
+  document.getElementById('panelTitle').textContent = '在线考核';
+  document.getElementById('panelBody').innerHTML = `
+    <div class="qa-list">
+      <div class="qa-item" onclick="alert('考核功能开发中')">📝 模式A：章节单元考核（每章10-15题）</div>
+      <div class="qa-item" onclick="alert('考核功能开发中')">🎭 模式B：剧情化穿插考核（虚拟病人全流程）</div>
+      <div class="qa-item" onclick="alert('考核功能开发中')">📊 成绩分析与智慧反馈</div>
+    </div>`;
+  document.getElementById('rightPanel').style.display = 'flex';
+}
+function showHelpPanel() {
+  document.getElementById('panelTitle').textContent = '操作帮助';
+  document.getElementById('panelBody').innerHTML = `
+    <div class="qa-list">
+      <div class="qa-item">▶ 点击底部步骤条切换场景</div>
+      <div class="qa-item">▶ 点击▶开始计时与生命体征模拟</div>
+      <div class="qa-item">▶ 右侧面板根据当前步骤显示对应操作</div>
+      <div class="qa-item">▶ 点击左侧工具栏切换知识库/考核/帮助</div>
+      <div class="qa-item">▶ 场景2中闪烁的金色圆点为电极位置</div>
+    </div>`;
+  document.getElementById('rightPanel').style.display = 'flex';
+}
+
+/* ===== 初始化 ===== */
+document.addEventListener('DOMContentLoaded', () => {
+  renderPanel(0);
+  initECG();
+  initReportECG();
+});
+</script>
+</body>
+</html>
