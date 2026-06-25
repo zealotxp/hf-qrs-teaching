@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.3] - 2026-06-25
+
+### Changed
+- 移除判读篇（模块3）顶部的「高频QRS判读训练 · 案例波形」ECG 波形区域
+- 清理 `js/app.js` 中页面初始化时所有 ECG canvas 动画调用（保留弹窗内 modal-ecg-canvas）
+
 ## [1.0.2] - 2026-06-25
 
 ### Changed

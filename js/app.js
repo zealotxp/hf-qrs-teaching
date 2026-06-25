@@ -719,11 +719,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // 默认显示第一个模块
   switchModule('mod-basic');
 
-  // 启动ECG波形动画
-  setTimeout(() => {
-    drawECG('ecg-canvas-2', '#63b3ed', 2);
-  }, 300);
-
   // 进度条动画
   setTimeout(() => {
     const fills = document.querySelectorAll('.progress-fill');
