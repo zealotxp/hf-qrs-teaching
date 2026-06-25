@@ -721,7 +721,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 启动ECG波形动画
   setTimeout(() => {
-    drawECG('ecg-canvas-1', '#00ff88', 1.5);
     drawECG('ecg-canvas-2', '#63b3ed', 2);
   }, 300);
 

@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.2] - 2026-06-25
+
+### Changed
+- 移除基础实操篇（模块1）顶部的实时高频QRS信号模拟 ECG 波形区域
+- 清理 `js/app.js` 中对应的 `ecg-canvas-1` 动画初始化调用
+
 ## [1.0.1] - 2026-06-25
 
 ### Changed
